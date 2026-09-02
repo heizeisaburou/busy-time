@@ -1,17 +1,7 @@
-import json
-from dataclasses import asdict, dataclass
-
 from ..arguments import BusyArgs
 from ..format import Format
+from ..models import BusyData
 from ..timing import timestamp_after
-
-
-@dataclass
-class BusyData:
-  finish: int
-
-  def to_json(self) -> str:
-    return json.dumps(asdict(self))
 
 
 def build_busy_data(args: BusyArgs) -> BusyData:
@@ -30,6 +20,7 @@ busytime join -j '{data.to_json()}'
 
 def run(args: BusyArgs):
   data = build_busy_data(args)
+
   match args.format:
     case Format.DISCORD:
       print(format_output(data))

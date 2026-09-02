@@ -1,10 +1,12 @@
 # busy-time
 
-A simple CLI to mark busy times, generate Discord timestamps, and share sessions with others.
+CLI sencilla para avisar de que estás ocupado, generar timestamps de Discord y compartir la sesión con otras personas para que se unan.
 
-## Installation
+## Instalación
 
-Clone the repository and install it with `pip`:
+Clona el repositorio e instálalo con `pip`:
+
+### Linux
 
 ```bash
 git clone https://github.com/heizeisaburou/busy-time.git
@@ -15,42 +17,146 @@ source .venv/bin/activate
 pip install .
 ```
 
-On Windows:
+### Windows
 
 ```powershell
+git clone https://github.com/heizeisaburou/busy-time.git
+Set-Location .\busy-time
+
+python -m venv .venv
 .venv\Scripts\activate
 pip install .
 ```
 
-## Usage
+## Uso
 
-Mark yourself as busy for a specific amount of time:
-
-```bash
-busytime -d 1h
-```
-
-You can specify the duration using hours, minutes, and seconds:
+`busytime` se organiza en subcomandos:
 
 ```bash
-busytime -d 1h30m
-busytime -d 45m
-busytime -d 30s
+busytime busy -d <duración> [-f <formato>]
+busytime join -j <json> [-o <offset>]
 ```
 
-By default, `busytime` outputs a Discord-ready message.
+### `busy` — abrir una sesión
 
-To get the raw session data as JSON:
+Marca que vas a estar ocupado durante un tiempo determinado:
 
 ```bash
-busytime -d 1h -f json
+busytime busy -d 1h
 ```
 
-Available formats:
+La duración se indica con horas, minutos y segundos. Todas las unidades son opcionales, pero hace falta al menos una (o el literal `0`). Se admiten espacios entre unidades:
 
-- `discord` — ready-to-share Discord message
-- `json` — raw session data
+```bash
+busytime busy -d 1h30m
+busytime busy -d "1h 30m 20s"
+busytime busy -d 45m
+busytime busy -d 30s
+```
 
-## Requirements
+Por defecto la salida es un mensaje listo para pegar en Discord, con la hora de final como timestamp (`<t:...:t>`) y las instrucciones para que otros se unan:
+
+````
+**Doing things** hasta <t:1788398961:t>
+Si quieres unirte descarga busytime ―GH: heizeisaburou/busy-time― y ejecuta:
+```sh
+busytime join -j '{"finish":1788398961}'
+```
+````
+
+Con `-f json` obtienes solo los datos de la sesión:
+
+```bash
+busytime busy -d 1h -f json
+```
+
+```json
+{ "finish": 1788397161 }
+```
+
+Formatos disponibles (`-f`, `--format`):
+
+- `discord` — mensaje listo para compartir en Discord (por defecto)
+- `json` — datos de la sesión en crudo
+
+### `join` — unirse a una sesión
+
+Toma el JSON generado por `busy` y genera el mensaje de respuesta:
+
+```bash
+busytime join -j '{"finish":1788378120}'
+```
+
+```
+Me uno a la sesión.
+```
+
+Con `-o` / `--offset` indicas si terminas antes o después que la sesión original. Acepta el mismo formato que `-d`, precedido opcionalmente de `+` o `-`, y el timestamp que se imprime es el final de la sesión ya desplazado:
+
+```bash
+busytime join -j '{"finish":1788378120}' -o -30m
+```
+
+```
+Me uno a la sesión hasta las <t:1788376320:t>.
+```
+
+```bash
+busytime join -j '{"finish":1788378120}' -o +1h
+```
+
+```
+Me uno a la sesión hasta las <t:1788381720:t>.
+```
+
+`-o` es opcional. Si lo omites —o pasas `-o 0`— el mensaje no incluye hora, porque terminas a la vez que el resto.
+
+## Formato de duraciones y offsets
+
+| Entrada      | Significado                           |
+| ------------ | ------------------------------------- |
+| `1h`         | 1 hora                                |
+| `30m`        | 30 minutos                            |
+| `20s`        | 20 segundos                           |
+| `1h30m20s`   | 1 hora, 30 minutos y 20 segundos      |
+| `1h 30m 20s` | igual, con espacios                   |
+| `0`          | sin duración / sin desplazamiento     |
+| `-30m`       | 30 minutos antes (solo en `--offset`) |
+| `+1h`        | 1 hora después (solo en `--offset`)   |
+
+Valores como `1`, `h`, `h1` o texto libre se rechazan con un error.
+
+## Desarrollo
+
+Para trabajar sobre el proyecto, instálalo en **modo editable** en lugar de con `pip install .`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+La diferencia importa. `pip install .` copia el paquete dentro de `site-packages`, y a partir de ahí el comando `busytime` ejecuta esa copia, no tus fuentes: editas el código y no ves ningún cambio hasta que reinstalas. Con `-e`, pip deja en `site-packages` un puntero a este directorio, así que el siguiente `busytime ...` ya usa lo que acabas de escribir.
+
+Ojo con este síntoma, porque despista: `python -m busytime.main ...` lanzado desde la raíz del repositorio siempre carga las fuentes (Python añade el directorio actual a `sys.path`), mientras que `busytime` a secas va a `site-packages`. Si los dos te dan resultados distintos, es que tienes una copia antigua instalada.
+
+### Cuándo hay que reinstalar
+
+Con el modo editable **no** hace falta reinstalar al cambiar código, ni al añadir módulos o subpaquetes nuevos dentro de `busytime/`. Sí hay que repetir `pip install -e .` cuando cambias metadata en `pyproject.toml`:
+
+- añadir o cambiar dependencias (`dependencies`)
+- cambiar el nombre o el destino del comando (`[project.scripts]`)
+- cambiar `version` o `requires-python`
+
+### Tests
+
+Los tests usan `pytest`, que todavía no está declarado en `pyproject.toml`; hay que instalarlo aparte:
+
+```bash
+pip install pytest
+pytest
+```
+
+## Requisitos
 
 - Python 3.14+
