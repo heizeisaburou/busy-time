@@ -1,0 +1,10 @@
+[project]
+name = "busy-time"
+version = "0.1.0"
+requires-python = ">=3.14"
+
+[project.scripts]
+busytime = "busytime.main:main"
+
+[project]
+dependencies = []
