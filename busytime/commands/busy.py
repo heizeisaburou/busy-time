@@ -15,14 +15,14 @@ class BusyData:
 
 
 def build_busy_data(args: BusyArgs) -> BusyData:
-  finish = timestamp_after(args.busy_time)
+  finish = timestamp_after(args.duration)
 
   return BusyData(finish=finish)
 
 
 def format_output(data: BusyData) -> str:
   return f"""**Doing things** hasta <t:{data.finish}:t>
-Si quieres unirte descarga https://github.com/heizeisaburou/busy-time y ejecuta:
+Si quieres unirte descarga busytime ―GH: heizeisaburou/busy-time― y ejecuta:
 ```sh
 busytime join -j '{data.to_json()}'
 ```"""

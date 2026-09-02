@@ -27,15 +27,15 @@ pip install .
 Mark yourself as busy for a specific amount of time:
 
 ```bash
-busytime -b 1h
+busytime -d 1h
 ```
 
 You can specify the duration using hours, minutes, and seconds:
 
 ```bash
-busytime -b 1h30m
-busytime -b 45m
-busytime -b 30s
+busytime -d 1h30m
+busytime -d 45m
+busytime -d 30s
 ```
 
 By default, `busytime` outputs a Discord-ready message.
@@ -43,7 +43,7 @@ By default, `busytime` outputs a Discord-ready message.
 To get the raw session data as JSON:
 
 ```bash
-busytime -b 1h -f json
+busytime -d 1h -f json
 ```
 
 Available formats:

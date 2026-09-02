@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Literal, cast
 
 from .format import Format
-from .timing import Time, parse_duration
+from .timing import Duration, parse_duration
 
 Command = Literal["busy", "join"]
 command_list: list[Command] = ["busy", "join"]
@@ -12,7 +12,7 @@ command_list: list[Command] = ["busy", "join"]
 
 @dataclass
 class BusyArgs:
-  busy_time: Time
+  duration: Duration
   format: Format
 
 
@@ -35,8 +35,8 @@ def parse() -> BusyArgs | JoinArgs:
   busy_parser: argparse.ArgumentParser = subparsers.add_parser("busy")
 
   _ = busy_parser.add_argument(
-    "-b",
-    "--busy-time",
+    "-d",
+    "--duration",
     type=parse_duration,
     required=True,
     help="Tiempo que vas a estar ocupado",
@@ -63,9 +63,9 @@ def parse() -> BusyArgs | JoinArgs:
   command = cast(Command, args.command)
   match command:
     case "busy":
-      busy_time = cast(Time, args.busy_time)
+      duration = cast(Duration, args.duration)
       format = cast(Format, args.format)
-      return BusyArgs(busy_time=busy_time, format=format)
+      return BusyArgs(duration=duration, format=format)
     case "join":
       return JoinArgs()
     case _:  # pyright: ignore[reportUnnecessaryComparison]
