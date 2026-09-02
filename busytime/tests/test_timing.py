@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from ..timing import Duration, parse_duration, timestamp_after
+from ..timing import Duration, timestamp_after
 
 
 @pytest.mark.parametrize(
@@ -18,7 +18,7 @@ from ..timing import Duration, parse_duration, timestamp_after
   ],
 )
 def test_parse_duration(value: str, want: Duration):
-  got = parse_duration(value)
+  got = Duration.from_string(value)
 
   assert got == want
 
@@ -35,7 +35,7 @@ def test_parse_duration(value: str, want: Duration):
 )
 def test_parse_duration_invalid_values(value: str):
   with pytest.raises(ValueError):
-    _ = parse_duration(value)
+    _ = Duration.from_string(value)
 
 
 @pytest.mark.parametrize(
