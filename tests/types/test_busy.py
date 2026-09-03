@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from busytime.models import BusyData
+from busytime.types.busy import BusyData
 
 from_json_samples = [
   ('{"finish":1788378120}', BusyData(finish=1788378120)),

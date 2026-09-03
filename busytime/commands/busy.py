@@ -1,7 +1,7 @@
 from ..arguments import BusyArgs
-from ..format import Format
-from ..models import BusyData
-from ..timing import timestamp_after
+from ..types.busy import BusyData
+from ..types.format import Format
+from ..types.timing.duration import timestamp_after
 
 
 def build_busy_data(args: BusyArgs) -> BusyData:

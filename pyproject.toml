@@ -9,3 +9,7 @@ busytime = "busytime.main:main"
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
+
+[tool.basedpyright]
+typeCheckingMode = "strict"
+# include = ["busytime", "tests"]

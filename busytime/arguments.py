@@ -4,9 +4,10 @@ from typing import Literal, cast
 
 from pydantic import ValidationError
 
-from .format import Format
-from .models import BusyData
-from .timing import Duration, Offset
+from .types.busy import BusyData
+from .types.format import Format
+from .types.timing.duration import Duration
+from .types.timing.offset import Offset
 
 Command = Literal["busy", "join"]
 command_list: list[Command] = ["busy", "join"]
@@ -23,6 +24,7 @@ command_list: list[Command] = ["busy", "join"]
 class BusyArgs:
   duration: Duration
   format: Format
+  # interruptibility: int
 
 
 def parse_duration(value: str) -> Duration:

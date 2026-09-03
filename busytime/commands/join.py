@@ -1,5 +1,5 @@
 from ..arguments import JoinArgs
-from ..timing import timestamp_with_offset
+from ..types.timing.offset import timestamp_with_offset
 
 # :TODO: Si alguien termina al mismo tiempo tiempo entonces no mostrar el finish, no es necesario.
 #  Pero si termina antes o después, o descansa mas tiempo agregar pero, y .. etc
