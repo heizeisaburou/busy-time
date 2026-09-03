@@ -2,9 +2,12 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict
 
+from ..types.interruptibility import Interruptibility
+
 
 class BusyData(BaseModel):
   finish: int
+  interruptibility: Interruptibility
 
   model_config = ConfigDict(extra="forbid")
 

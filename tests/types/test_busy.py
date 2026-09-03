@@ -5,7 +5,10 @@ import pytest
 from busytime.types.busy import BusyData
 
 from_json_samples = [
-  ('{"finish":1788378120}', BusyData(finish=1788378120)),
+  (
+    '{"finish":1788378120,"interruptibility":0}',
+    BusyData(finish=1788378120, interruptibility=0),
+  ),
 ]
 
 to_json_samples = [(model, json) for json, model in from_json_samples]
