@@ -8,10 +8,9 @@ def interruptibility(interruptibility: Interruptibility) -> str:
     if interruptibility != Interruptibility.LEVEL_0
     else "**accessible**"
   )
+
   enfocado = (
-    "accessible"
-    if interruptibility != Interruptibility.LEVEL_5
-    else "**accessible**"
+    "enfocado" if interruptibility != Interruptibility.LEVEL_5 else "**enfocado**"
   )
 
   return f"- {accessible} ❮{interruptibility.as_bar()}❯ {enfocado}"
