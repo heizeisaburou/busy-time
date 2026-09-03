@@ -1,0 +1,24 @@
+# Ancho e indentación iguales a los que usa Neovim (ver
+# lua/user/format.lua y lua/user/indent.lua en la config de nvim): 85
+# columnas, 2 espacios. `ruff format` es quien manda sobre el estilo; esto
+# solo hace que el linter y el formateador coincidan.
+line-length = 85
+indent-width = 2
+target-version = "py314"
+
+[format]
+indent-style = "space"
+quote-style = "double"
+
+[lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "RUF"]
+ignore = [
+  # El proyecto usa caracteres unicode "ambiguos" a propósito (❮❯, ―) para
+  # dar formato al output de Discord.
+  "RUF001",
+  "RUF002",
+  "RUF003",
+]
+
+[lint.isort]
+known-first-party = ["busytime"]
