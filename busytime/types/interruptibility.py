@@ -8,3 +8,7 @@ class Interruptibility(IntEnum):
   LEVEL_3 = 3
   LEVEL_4 = 4
   LEVEL_5 = 5
+
+  # :TODO: Testear Interruptibility.as_bar.
+  def as_bar(self) -> str:
+    return "▰" * self.value + "▱" * (5 - self.value)

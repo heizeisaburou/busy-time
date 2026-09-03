@@ -2,12 +2,10 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict
 
-from ..types.interruptibility import Interruptibility
 
-
-class BusyData(BaseModel):
+# :TODO: Testear SessionData.from_json y SessionData.to_json.
+class SessionData(BaseModel):
   finish: int
-  interruptibility: Interruptibility | None = None
 
   model_config = ConfigDict(extra="forbid")
 

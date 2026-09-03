@@ -4,8 +4,9 @@ from typing import Literal, cast
 
 from pydantic import ValidationError
 
-from .types.busy import BusyData
 from .types.format import Format
+from .types.interruptibility import Interruptibility
+from .types.session import SessionData
 from .types.timing.duration import Duration
 from .types.timing.offset import Offset
 
@@ -14,17 +15,35 @@ command_list: list[Command] = ["busy", "join"]
 
 
 # :TODO: Agregar argumento de identidad, user_id.
+
 # :TODO: Agregar un argumento para qué tan ocupado (0-5)
-# :TODO: Agregar un argumento para target time, es decir poder indicar la hora, minuto, segundo, etc.
+
+# :TODO: Agregar un argumento para target time, es decir poder indicar la hora,
+#  minuto, segundo, etc.
+
 # :TODO: Agregar un argumento para poder escoger la zona horaria
+
 # :TODO: Agregar un argumento para programar una hora concreta
+
+# :TODO: Ver si podemos crear una lista de add_argument común para no duplicar
+#  parámetros como -i
+
+# :TODO: Hacer los tests de las funciones de parse_ de este archivo y de parse()
+#  también.
+
+
+def parse_interruptibility(value: str) -> Interruptibility:
+  try:
+    return Interruptibility(int(value))
+  except ValueError as e:
+    raise argparse.ArgumentTypeError(str(e)) from e
 
 
 @dataclass
 class BusyArgs:
   duration: Duration
+  interruptibility: Interruptibility | None
   format: Format
-  # interruptibility: int
 
 
 def parse_duration(value: str) -> Duration:
@@ -36,13 +55,14 @@ def parse_duration(value: str) -> Duration:
 
 @dataclass
 class JoinArgs:
-  data: BusyData
+  session: SessionData
   offset: Offset
+  interruptibility: Interruptibility | None
 
 
-def parse_busy_data(value: str) -> BusyData:
+def parse_session_data(value: str) -> SessionData:
   try:
-    return BusyData.from_json(value)
+    return SessionData.from_json(value)
   except ValidationError as e:
     raise argparse.ArgumentTypeError(str(e)) from e
 
@@ -50,7 +70,7 @@ def parse_busy_data(value: str) -> BusyData:
 def parse_offset(value: str) -> Offset:
   try:
     return Offset.from_string(value)
-  except ValidationError as e:
+  except ValueError as e:
     raise argparse.ArgumentTypeError(str(e)) from e
 
 
@@ -70,6 +90,18 @@ def parse() -> BusyArgs | JoinArgs:
   )
 
   _ = busy_parser.add_argument(
+    "-i",
+    "--interruptibility",
+    type=parse_interruptibility,
+    choices=Interruptibility,
+    default=None,
+    help=(
+      "A mayor nivel declaras que más importante debe ser el motivo por el cuál"
+      "interrumpan tu sesión"
+    ),
+  )
+
+  _ = busy_parser.add_argument(
     "-f",
     "--format",
     type=Format,
@@ -81,11 +113,23 @@ def parse() -> BusyArgs | JoinArgs:
   join_parser: argparse.ArgumentParser = subparsers.add_parser("join")
 
   _ = join_parser.add_argument(
-    "-j",
-    "--json",
-    type=parse_busy_data,
+    "-s",
+    "--session",
+    type=parse_session_data,
     required=True,
-    help="JSON generado por el comando busy al que quieres unirte.",
+    help="Sesión a la que quieres unirte",
+  )
+
+  _ = join_parser.add_argument(
+    "-i",
+    "--interruptibility",
+    type=parse_interruptibility,
+    choices=Interruptibility,
+    default=None,
+    help=(
+      "A mayor nivel declaras que más importante debe ser el motivo por el cuál"
+      "interrumpan tu sesión"
+    ),
   )
 
   _ = join_parser.add_argument(
@@ -93,7 +137,9 @@ def parse() -> BusyArgs | JoinArgs:
     "--offset",
     type=parse_offset,
     default=Offset(),
-    help="Desplazamiento respecto al final de la sesión (para terminar antes o después)",
+    help=(
+      "Desplazamiento respecto al final de la sesión (para terminar antes o después)"
+    ),
   )
 
   args = parser.parse_args()
@@ -103,12 +149,22 @@ def parse() -> BusyArgs | JoinArgs:
     case "busy":
       duration = cast(Duration, args.duration)
       format = cast(Format, args.format)
+      interruptibility = cast(Interruptibility | None, args.interruptibility)
 
-      return BusyArgs(duration=duration, format=format)
+      return BusyArgs(
+        duration=duration,
+        interruptibility=interruptibility,
+        format=format,
+      )
     case "join":
-      data = cast(BusyData, args.json)
+      session = cast(SessionData, args.session)
       offset = cast(Offset, args.offset)
+      interruptibility = cast(Interruptibility | None, args.interruptibility)
 
-      return JoinArgs(data=data, offset=offset)
+      return JoinArgs(
+        session=session,
+        offset=offset,
+        interruptibility=interruptibility,
+      )
     case _:  # pyright: ignore[reportUnnecessaryComparison]
       raise ValueError(f"Unexpected command {command!r}")  # pyright: ignore[reportUnreachable]
