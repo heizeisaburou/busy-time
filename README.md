@@ -34,7 +34,7 @@ pip install .
 
 ```bash
 busytime busy -d <duración> [-f <formato>]
-busytime join -j <json> [-o <offset>]
+busytime join -s <json de la sesión> [-o <offset>]
 ```
 
 ### `busy` — abrir una sesión
@@ -60,11 +60,11 @@ Por defecto la salida es un mensaje listo para pegar en Discord, con la hora de 
 **Doing things** hasta <t:1788398961:t>
 Si quieres unirte descarga busytime ―GH: heizeisaburou/busy-time― y ejecuta:
 ```sh
-busytime join -j '{"finish":1788398961}'
+busytime join -s '{"finish":1788398961}'
 ```
 ````
 
-Con `-f json` obtienes solo los datos de la sesión:
+Con `-f json` obtienes en crudo lo que estableciste (incluye `interruptibility` si la indicaste con `-i`):
 
 ```bash
 busytime busy -d 1h -f json
@@ -77,14 +77,14 @@ busytime busy -d 1h -f json
 Formatos disponibles (`-f`, `--format`):
 
 - `discord` — mensaje listo para compartir en Discord (por defecto)
-- `json` — datos de la sesión en crudo
+- `json` — lo que estableciste, en crudo
 
 ### `join` — unirse a una sesión
 
-Toma el JSON generado por `busy` y genera el mensaje de respuesta:
+Toma el JSON de la sesión generado por `busy` y genera el mensaje de respuesta:
 
 ```bash
-busytime join -j '{"finish":1788378120}'
+busytime join -s '{"finish":1788378120}'
 ```
 
 ```
@@ -94,7 +94,7 @@ Me uno a la sesión.
 Con `-o` / `--offset` indicas si terminas antes o después que la sesión original. Acepta el mismo formato que `-d`, precedido opcionalmente de `+` o `-`, y el timestamp que se imprime es el final de la sesión ya desplazado:
 
 ```bash
-busytime join -j '{"finish":1788378120}' -o -30m
+busytime join -s '{"finish":1788378120}' -o -30m
 ```
 
 ```
@@ -102,7 +102,7 @@ Me uno a la sesión hasta las <t:1788376320:t>.
 ```
 
 ```bash
-busytime join -j '{"finish":1788378120}' -o +1h
+busytime join -s '{"finish":1788378120}' -o +1h
 ```
 
 ```

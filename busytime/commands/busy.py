@@ -1,21 +1,44 @@
 from ..arguments import BusyArgs
-from ..format import Format
-from ..models import BusyData
-from ..timing import timestamp_after
+from ..types.busy import BusyData
+from ..types.format import Format
+from ..types.session import SessionData
+from ..types.timing.duration import timestamp_after
+from . import _format
 
 
+# :TODO: Testear build_busy_data.
 def build_busy_data(args: BusyArgs) -> BusyData:
-  finish = timestamp_after(args.duration)
+  return BusyData(
+    finish=timestamp_after(args.duration), interruptibility=args.interruptibility
+  )
 
-  return BusyData(finish=finish)
+
+# :TODO: Testear session_from_busy_data.
+def session_from_busy_data(data: BusyData) -> SessionData:
+  return SessionData(
+    finish=data.finish,
+  )
 
 
+# :TODO: Testear format_output.
 def format_output(data: BusyData) -> str:
-  return f"""**Doing things** hasta <t:{data.finish}:t>
-Si quieres unirte descarga busytime ―GH: heizeisaburou/busy-time― y ejecuta:
-```sh
-busytime join -j '{data.to_json()}'
-```"""
+  lines = [f"**Doing things** hasta <t:{data.finish}:t>"]
+
+  if data.interruptibility is not None:
+    lines.append(_format.interruptibility(data.interruptibility))
+
+  session_data = session_from_busy_data(data)
+  lines.extend(
+    [
+      "",
+      "Si quieres unirte descarga busytime ―GH: heizeisaburou/busy-time― y ejecuta:",
+      "```sh",
+      f"busytime join -s '{session_data.to_json()}'",
+      "```",
+    ],
+  )
+
+  return "\n".join(lines)
 
 
 def run(args: BusyArgs):

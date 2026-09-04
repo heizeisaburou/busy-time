@@ -1,17 +1,22 @@
 from ..arguments import JoinArgs
-from ..timing import timestamp_with_offset
-
-# :TODO: Si alguien termina al mismo tiempo tiempo entonces no mostrar el finish, no es necesario.
-#  Pero si termina antes o después, o descansa mas tiempo agregar pero, y .. etc
+from ..types.timing.offset import timestamp_with_offset
+from . import _format
 
 
+# :TODO: Testear format_output.
 def format_output(args: JoinArgs):
+  lines: list[str] = []
+
   if args.offset.total_seconds() == 0:
     return "Me uno a la sesión."
+  else:
+    until = timestamp_with_offset(args.session.finish, args.offset)
+    lines.append(f"Me uno a la sesión hasta las <t:{until}:t>.")
 
-  until = timestamp_with_offset(args.data.finish, args.offset)
+  if args.interruptibility is not None:
+    lines.append(_format.interruptibility(args.interruptibility))
 
-  return f"Me uno a la sesión hasta las <t:{until}:t>."
+  return "\n".join(lines)
 
 
 def run(args: JoinArgs):

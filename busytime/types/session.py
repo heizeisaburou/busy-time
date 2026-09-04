@@ -3,7 +3,8 @@ from typing import Self
 from pydantic import BaseModel, ConfigDict
 
 
-class BusyData(BaseModel):
+# :TODO: Testear SessionData.from_json y SessionData.to_json.
+class SessionData(BaseModel):
   finish: int
 
   model_config = ConfigDict(extra="forbid")
@@ -13,4 +14,4 @@ class BusyData(BaseModel):
     return cls.model_validate_json(data)
 
   def to_json(self) -> str:
-    return self.model_dump_json()
+    return self.model_dump_json(exclude_none=True)

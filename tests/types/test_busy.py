@@ -2,10 +2,22 @@ import json
 
 import pytest
 
-from busytime.models import BusyData
+from busytime.arguments import Interruptibility
+from busytime.types.busy import BusyData
 
 from_json_samples = [
-  ('{"finish":1788378120}', BusyData(finish=1788378120)),
+  (
+    '{"finish":1788378120}',
+    BusyData(finish=1788378120),
+  ),
+  (
+    '{"finish":1788378120,"interruptibility":0}',
+    BusyData(finish=1788378120, interruptibility=Interruptibility.LEVEL_0),
+  ),
+  (
+    '{"finish":1788378120,"interruptibility":5}',
+    BusyData(finish=1788378120, interruptibility=Interruptibility.LEVEL_5),
+  ),
 ]
 
 to_json_samples = [(model, json) for json, model in from_json_samples]
