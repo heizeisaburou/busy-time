@@ -31,7 +31,10 @@ def format_output(data: BusyData) -> str:
   lines.extend(
     [
       "",
-      "Si quieres unirte descarga busytime ―GH: heizeisaburou/busy-time― y ejecuta:",
+      (
+        "Si quieres unirte a la sesión descarga busy-time (heizeisaburou/busy-time) "
+        "y ejecuta:"
+      ),
       "```sh",
       f"busytime join -s '{session_data.to_json()}'",
       "```",

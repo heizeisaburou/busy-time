@@ -16,10 +16,10 @@ command_list: list[Command] = ["busy", "join"]
 
 # :TODO: Agregar argumento de identidad, user_id.
 
-# :TODO: Agregar un argumento para qué tan ocupado (0-5)
-
 # :TODO: Agregar un argumento para target time, es decir poder indicar la hora,
 #  minuto, segundo, etc.
+
+# :TODO: Agregar un argumento de mensaje personalizado
 
 # :TODO: Agregar un argumento para poder escoger la zona horaria
 
